@@ -14,13 +14,238 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      form_editors: {
+        Row: {
+          created_at: string
+          form_id: string
+          id: string
+          invited_by: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          form_id: string
+          id?: string
+          invited_by?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          form_id?: string
+          id?: string
+          invited_by?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_editors_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "forms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      form_responses: {
+        Row: {
+          answers: Json
+          form_id: string
+          id: string
+          submitted_at: string
+        }
+        Insert: {
+          answers?: Json
+          form_id: string
+          id?: string
+          submitted_at?: string
+        }
+        Update: {
+          answers?: Json
+          form_id?: string
+          id?: string
+          submitted_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_responses_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "forms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      form_styles: {
+        Row: {
+          background_color: string | null
+          background_image: string | null
+          background_type: string | null
+          border_radius: string | null
+          closed_message: string | null
+          created_at: string
+          form_id: string
+          gradient_direction: string | null
+          gradient_end: string | null
+          gradient_start: string | null
+          id: string
+          primary_color: string | null
+          spacing: string | null
+          success_message: string | null
+          text_color: string | null
+        }
+        Insert: {
+          background_color?: string | null
+          background_image?: string | null
+          background_type?: string | null
+          border_radius?: string | null
+          closed_message?: string | null
+          created_at?: string
+          form_id: string
+          gradient_direction?: string | null
+          gradient_end?: string | null
+          gradient_start?: string | null
+          id?: string
+          primary_color?: string | null
+          spacing?: string | null
+          success_message?: string | null
+          text_color?: string | null
+        }
+        Update: {
+          background_color?: string | null
+          background_image?: string | null
+          background_type?: string | null
+          border_radius?: string | null
+          closed_message?: string | null
+          created_at?: string
+          form_id?: string
+          gradient_direction?: string | null
+          gradient_end?: string | null
+          gradient_start?: string | null
+          id?: string
+          primary_color?: string | null
+          spacing?: string | null
+          success_message?: string | null
+          text_color?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_styles_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: true
+            referencedRelation: "forms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forms: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          slug: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      question_options: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          position: number
+          question_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          position: number
+          question_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          position?: number
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      questions: {
+        Row: {
+          created_at: string
+          form_id: string
+          id: string
+          position: number
+          required: boolean
+          title: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          form_id: string
+          id?: string
+          position: number
+          required?: boolean
+          title: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          form_id?: string
+          id?: string
+          position?: number
+          required?: boolean
+          title?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "forms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_unique_slug: { Args: { base_text: string }; Returns: string }
     }
     Enums: {
       [_ in never]: never
