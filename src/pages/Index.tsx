@@ -51,6 +51,7 @@ const Index = () => {
         gradientEnd: '#8b5cf6',
         gradientDirection: 'to bottom',
         backgroundImage: '',
+        successMessage: 'הטופס נשלח בהצלחה!',
       },
     };
     setForms([...forms, newForm]);

@@ -100,6 +100,19 @@ const CustomizationPanel = ({ style, onStyleChange }: CustomizationPanelProps) =
 
       <div className="space-y-4">
         <div className="space-y-2">
+          <Label>הודעת הצלחה</Label>
+          <Input
+            value={style.successMessage || ''}
+            onChange={(e) => onStyleChange({ ...style, successMessage: e.target.value })}
+            placeholder="הטופס נשלח בהצלחה!"
+            dir="auto"
+          />
+          <p className="text-xs text-muted-foreground">
+            ההודעה שתוצג למשתמש לאחר שליחת הטופס
+          </p>
+        </div>
+
+        <div className="space-y-2">
           <Label>צבע טקסט</Label>
           <Input
             type="color"

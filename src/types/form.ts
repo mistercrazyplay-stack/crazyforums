@@ -24,6 +24,7 @@ export interface FormStyle {
   gradientEnd?: string;
   gradientDirection?: string;
   backgroundImage?: string;
+  successMessage?: string;
 }
 
 export interface Form {

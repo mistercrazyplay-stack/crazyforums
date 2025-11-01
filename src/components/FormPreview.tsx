@@ -16,6 +16,7 @@ interface FormPreviewProps {
 const FormPreview = ({ form }: FormPreviewProps) => {
   const { style } = form;
   const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleAnswerChange = (questionId: string, value: any) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
@@ -54,8 +55,8 @@ const FormPreview = ({ form }: FormPreviewProps) => {
       description: "תודה על מילוי הטופס.",
     });
     
-    // Reset form
-    setAnswers({});
+    // Show success message
+    setIsSubmitted(true);
   };
 
   const getBackgroundStyle = (): React.CSSProperties => {
@@ -101,6 +102,53 @@ const FormPreview = ({ form }: FormPreviewProps) => {
   return (
     <div style={getBackgroundStyle()}>
       <div className="max-w-2xl mx-auto">
+        {isSubmitted ? (
+          <Card 
+            className="p-12 text-center shadow-xl"
+            style={{
+              borderRadius: style.borderRadius,
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            }}
+          >
+            <div className="space-y-6">
+              <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto">
+                <svg
+                  className="w-10 h-10 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-2xl font-bold" style={{ color: style.primaryColor }}>
+                  {style.successMessage || 'הטופס נשלח בהצלחה!'}
+                </h2>
+                <p className="text-muted-foreground">
+                  תודה על מילוי הטופס
+                </p>
+              </div>
+              <Button
+                onClick={() => {
+                  setIsSubmitted(false);
+                  setAnswers({});
+                }}
+                style={{ 
+                  backgroundColor: style.primaryColor,
+                  borderRadius: style.borderRadius 
+                }}
+              >
+                מלא טופס נוסף
+              </Button>
+            </div>
+          </Card>
+        ) : (
         <form onSubmit={handleSubmit}>
           <Card 
             className="p-8 space-y-6 shadow-xl"
@@ -232,6 +280,7 @@ const FormPreview = ({ form }: FormPreviewProps) => {
           )}
           </Card>
         </form>
+        )}
       </div>
     </div>
   );
