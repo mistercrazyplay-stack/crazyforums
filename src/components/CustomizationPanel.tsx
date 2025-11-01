@@ -7,8 +7,8 @@ import { Palette } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface CustomizationPanelProps {
-  style: FormStyle;
-  onStyleChange: (style: FormStyle) => void;
+  style: any;
+  onStyleChange: (style: any) => void;
 }
 
 const CustomizationPanel = ({ style, onStyleChange }: CustomizationPanelProps) => {
@@ -20,8 +20,8 @@ const CustomizationPanel = ({ style, onStyleChange }: CustomizationPanelProps) =
       </div>
 
       <Tabs 
-        value={style.backgroundType} 
-        onValueChange={(value) => onStyleChange({ ...style, backgroundType: value as 'solid' | 'gradient' | 'image' })}
+        value={style.background_type || style.backgroundType} 
+        onValueChange={(value) => onStyleChange({ ...style, background_type: value as 'solid' | 'gradient' | 'image' })}
       >
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="solid">צבע אחיד</TabsTrigger>
@@ -34,8 +34,8 @@ const CustomizationPanel = ({ style, onStyleChange }: CustomizationPanelProps) =
             <Label>צבע רקע</Label>
             <Input
               type="color"
-              value={style.backgroundColor}
-              onChange={(e) => onStyleChange({ ...style, backgroundColor: e.target.value, backgroundType: 'solid' })}
+              value={style.background_color || style.backgroundColor || '#ffffff'}
+              onChange={(e) => onStyleChange({ ...style, background_color: e.target.value, background_type: 'solid' })}
               className="h-10 cursor-pointer"
             />
           </div>
@@ -46,8 +46,8 @@ const CustomizationPanel = ({ style, onStyleChange }: CustomizationPanelProps) =
             <Label>צבע התחלה</Label>
             <Input
               type="color"
-              value={style.gradientStart || '#3b82f6'}
-              onChange={(e) => onStyleChange({ ...style, gradientStart: e.target.value, backgroundType: 'gradient' })}
+              value={style.gradient_start || style.gradientStart || '#3b82f6'}
+              onChange={(e) => onStyleChange({ ...style, gradient_start: e.target.value, background_type: 'gradient' })}
               className="h-10 cursor-pointer"
             />
           </div>
@@ -55,16 +55,16 @@ const CustomizationPanel = ({ style, onStyleChange }: CustomizationPanelProps) =
             <Label>צבע סיום</Label>
             <Input
               type="color"
-              value={style.gradientEnd || '#8b5cf6'}
-              onChange={(e) => onStyleChange({ ...style, gradientEnd: e.target.value, backgroundType: 'gradient' })}
+              value={style.gradient_end || style.gradientEnd || '#8b5cf6'}
+              onChange={(e) => onStyleChange({ ...style, gradient_end: e.target.value, background_type: 'gradient' })}
               className="h-10 cursor-pointer"
             />
           </div>
           <div className="space-y-2">
             <Label>כיוון המעבר</Label>
             <Select 
-              value={style.gradientDirection || 'to bottom'} 
-              onValueChange={(value) => onStyleChange({ ...style, gradientDirection: value })}
+              value={style.gradient_direction || style.gradientDirection || 'to bottom'} 
+              onValueChange={(value) => onStyleChange({ ...style, gradient_direction: value })}
             >
               <SelectTrigger>
                 <SelectValue />
@@ -86,8 +86,8 @@ const CustomizationPanel = ({ style, onStyleChange }: CustomizationPanelProps) =
             <Label>כתובת תמונה (URL)</Label>
             <Input
               type="url"
-              value={style.backgroundImage || ''}
-              onChange={(e) => onStyleChange({ ...style, backgroundImage: e.target.value, backgroundType: e.target.value ? 'image' : 'solid' })}
+              value={style.background_image || style.backgroundImage || ''}
+              onChange={(e) => onStyleChange({ ...style, background_image: e.target.value, background_type: e.target.value ? 'image' : 'solid' })}
               placeholder="https://example.com/image.jpg"
               dir="ltr"
             />
@@ -102,8 +102,8 @@ const CustomizationPanel = ({ style, onStyleChange }: CustomizationPanelProps) =
         <div className="space-y-2">
           <Label>הודעת הצלחה</Label>
           <Input
-            value={style.successMessage || ''}
-            onChange={(e) => onStyleChange({ ...style, successMessage: e.target.value })}
+            value={style.success_message || style.successMessage || ''}
+            onChange={(e) => onStyleChange({ ...style, success_message: e.target.value })}
             placeholder="הטופס נשלח בהצלחה!"
             dir="auto"
           />
@@ -115,8 +115,8 @@ const CustomizationPanel = ({ style, onStyleChange }: CustomizationPanelProps) =
         <div className="space-y-2">
           <Label>הודעת טופס סגור</Label>
           <Input
-            value={style.closedMessage || ''}
-            onChange={(e) => onStyleChange({ ...style, closedMessage: e.target.value })}
+            value={style.closed_message || style.closedMessage || ''}
+            onChange={(e) => onStyleChange({ ...style, closed_message: e.target.value })}
             placeholder="הטופס סגור"
             dir="auto"
           />
@@ -129,8 +129,8 @@ const CustomizationPanel = ({ style, onStyleChange }: CustomizationPanelProps) =
           <Label>צבע טקסט</Label>
           <Input
             type="color"
-            value={style.textColor}
-            onChange={(e) => onStyleChange({ ...style, textColor: e.target.value })}
+            value={style.text_color || style.textColor || '#000000'}
+            onChange={(e) => onStyleChange({ ...style, text_color: e.target.value })}
             className="h-10 cursor-pointer"
           />
         </div>
@@ -139,8 +139,8 @@ const CustomizationPanel = ({ style, onStyleChange }: CustomizationPanelProps) =
           <Label>צבע ראשי</Label>
           <Input
             type="color"
-            value={style.primaryColor}
-            onChange={(e) => onStyleChange({ ...style, primaryColor: e.target.value })}
+            value={style.primary_color || style.primaryColor || '#3b82f6'}
+            onChange={(e) => onStyleChange({ ...style, primary_color: e.target.value })}
             className="h-10 cursor-pointer"
           />
         </div>
@@ -148,8 +148,8 @@ const CustomizationPanel = ({ style, onStyleChange }: CustomizationPanelProps) =
         <div className="space-y-2">
           <Label>עיגול פינות</Label>
           <Select 
-            value={style.borderRadius} 
-            onValueChange={(value) => onStyleChange({ ...style, borderRadius: value })}
+            value={style.border_radius || style.borderRadius || 'medium'} 
+            onValueChange={(value) => onStyleChange({ ...style, border_radius: value })}
           >
             <SelectTrigger>
               <SelectValue />
@@ -167,7 +167,7 @@ const CustomizationPanel = ({ style, onStyleChange }: CustomizationPanelProps) =
         <div className="space-y-2">
           <Label>ריווח בין שאלות</Label>
           <Select 
-            value={style.spacing} 
+            value={style.spacing || 'normal'} 
             onValueChange={(value) => onStyleChange({ ...style, spacing: value })}
           >
             <SelectTrigger>
