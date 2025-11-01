@@ -33,9 +33,14 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
 
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [errors, setErrors] = useState<Record<string, boolean>>({});
 
   const handleAnswerChange = (questionId: string, value: any) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
+    // Clear error when user starts answering
+    if (errors[questionId]) {
+      setErrors(prev => ({ ...prev, [questionId]: false }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -57,11 +62,25 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
     });
 
     if (unansweredRequired.length > 0) {
+      // Mark all unanswered required questions with errors
+      const newErrors: Record<string, boolean> = {};
+      unansweredRequired.forEach(q => {
+        newErrors[q.id] = true;
+      });
+      setErrors(newErrors);
+      
       toast({
         title: "לא ניתן לשלוח טופס",
         description: validationMessage,
         variant: "destructive",
       });
+      
+      // Scroll to first error
+      const firstErrorElement = document.getElementById(`question-${unansweredRequired[0].id}`);
+      if (firstErrorElement) {
+        firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      
       return;
     }
 
@@ -236,7 +255,8 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
           <div className="space-y-6">
             {form.questions.map((question, index) => (
               <div 
-                key={question.id} 
+                key={question.id}
+                id={`question-${question.id}`}
                 className="space-y-3"
                 style={{ marginBottom: spacing }}
                 dir="auto"
@@ -247,6 +267,11 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
                     <span className="text-destructive ml-1">*</span>
                   )}
                 </Label>
+                {errors[question.id] && (
+                  <p className="text-sm text-destructive font-medium">
+                    שדה זה הינו חובה
+                  </p>
+                )}
 
                 {question.type === 'text' && (
                   <Input 
@@ -255,6 +280,7 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
                     value={answers[question.id] || ''}
                     onChange={(e) => handleAnswerChange(question.id, e.target.value)}
                     style={{ borderRadius: borderRadius }}
+                    className={errors[question.id] ? 'border-destructive border-2' : ''}
                   />
                 )}
 
@@ -266,6 +292,7 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
                     value={answers[question.id] || ''}
                     onChange={(e) => handleAnswerChange(question.id, e.target.value)}
                     style={{ borderRadius: borderRadius }}
+                    className={errors[question.id] ? 'border-destructive border-2' : ''}
                   />
                 )}
 
@@ -277,6 +304,7 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
                     value={answers[question.id] || ''}
                     onChange={(e) => handleAnswerChange(question.id, e.target.value)}
                     style={{ borderRadius: borderRadius }}
+                    className={errors[question.id] ? 'border-destructive border-2' : ''}
                   />
                 )}
 
@@ -284,6 +312,7 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
                   <RadioGroup 
                     value={answers[question.id] || ''}
                     onValueChange={(value) => handleAnswerChange(question.id, value)}
+                    className={errors[question.id] ? 'border-2 border-destructive rounded-md p-3' : ''}
                   >
                     {question.options?.map((option) => (
                       <div key={option.id} className="flex items-center gap-2">
@@ -300,7 +329,7 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
                 )}
 
                 {question.type === 'checkbox' && (
-                  <div className="space-y-3">
+                  <div className={`space-y-3 ${errors[question.id] ? 'border-2 border-destructive rounded-md p-3' : ''}`}>
                     {question.options?.map((option) => (
                       <div key={option.id} className="flex items-center gap-2">
                         <Checkbox 
