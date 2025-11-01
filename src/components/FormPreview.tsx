@@ -16,6 +16,21 @@ interface FormPreviewProps {
 
 const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
   const { style } = form;
+  const textColor = (style as any).text_color || style.textColor || '#000000';
+  const primaryColor = (style as any).primary_color || style.primaryColor || '#3b82f6';
+  const backgroundType = (style as any).background_type || style.backgroundType || 'solid';
+  const backgroundColor = (style as any).background_color || style.backgroundColor || '#ffffff';
+  const gradientStart = (style as any).gradient_start || style.gradientStart || '#3b82f6';
+  const gradientEnd = (style as any).gradient_end || style.gradientEnd || '#8b5cf6';
+  const gradientDirection = (style as any).gradient_direction || style.gradientDirection || 'to bottom';
+  const backgroundImage = (style as any).background_image || style.backgroundImage || '';
+  const borderRadius = (style as any).border_radius || style.borderRadius || '8px';
+  const spacing = style.spacing || '1.5rem';
+  const successMessage = (style as any).success_message || style.successMessage || 'הטופס נשלח בהצלחה!';
+  const closedMessage = (style as any).closed_message || style.closedMessage || 'הטופס סגור';
+  const submitButtonText = (style as any).submit_button_text || 'שלח טופס';
+  const validationMessage = (style as any).validation_message || 'יש לענות על כל השאלות המסומנות כחובה (*)';
+
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -44,7 +59,7 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
     if (unansweredRequired.length > 0) {
       toast({
         title: "לא ניתן לשלוח טופס",
-        description: "יש לענות על כל השאלות המסומנות כחובה (*)",
+        description: validationMessage,
         variant: "destructive",
       });
       return;
@@ -77,41 +92,37 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
 
   const getBackgroundStyle = (): React.CSSProperties => {
     const baseStyle: React.CSSProperties = {
-      color: style.textColor,
+      color: textColor,
       minHeight: '100vh',
       padding: '1.5rem',
-      transition: 'all 0.3s ease'
+      transition: 'background-color 0.3s ease, color 0.3s ease, background 0.3s ease'
     };
 
     // Gradient background
-    if (style.backgroundType === 'gradient') {
-      const startColor = style.gradientStart || '#3b82f6';
-      const endColor = style.gradientEnd || '#8b5cf6';
-      const direction = style.gradientDirection || 'to bottom';
-      
+    if (backgroundType === 'gradient') {
       return {
         ...baseStyle,
-        background: `linear-gradient(${direction}, ${startColor}, ${endColor})`,
-        backgroundAttachment: 'fixed'
+        background: `linear-gradient(${gradientDirection}, ${gradientStart}, ${gradientEnd})`,
+        backgroundAttachment: 'fixed',
       };
-    } 
-    
+    }
+
     // Image background
-    if (style.backgroundType === 'image' && style.backgroundImage) {
+    if (backgroundType === 'image' && backgroundImage) {
       return {
         ...baseStyle,
-        backgroundImage: `url(${style.backgroundImage})`,
+        backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed'
+        backgroundAttachment: 'fixed',
       };
     }
-    
+
     // Solid color background (default)
     return {
       ...baseStyle,
-      backgroundColor: style.backgroundColor
+      backgroundColor,
     };
   };
 
@@ -143,8 +154,8 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
                 </svg>
               </div>
               <div className="space-y-2">
-            <h2 className="text-2xl font-bold" style={{ color: style.primaryColor, transition: 'color 0.3s ease' }}>
-              {style.closedMessage || 'הטופס סגור'}
+            <h2 className="text-2xl font-bold" style={{ color: primaryColor, transition: 'color 0.3s ease' }}>
+              {closedMessage}
             </h2>
                 <p className="text-muted-foreground">
                   אנא המתן לפתיחת הטופס בפעם הבאה
@@ -177,8 +188,8 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
                 </svg>
               </div>
               <div className="space-y-2">
-                <h2 className="text-2xl font-bold" style={{ color: style.primaryColor, transition: 'color 0.3s ease' }}>
-                  {style.successMessage || 'הטופס נשלח בהצלחה!'}
+                <h2 className="text-2xl font-bold" style={{ color: primaryColor, transition: 'color 0.3s ease' }}>
+                  {successMessage}
                 </h2>
                 <p className="text-muted-foreground">
                   תודה על מילוי הטופס
@@ -190,8 +201,8 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
                   setAnswers({});
                 }}
                 style={{ 
-                  backgroundColor: style.primaryColor,
-                  borderRadius: style.borderRadius,
+                  backgroundColor: primaryColor,
+                  borderRadius: borderRadius,
                   transition: 'all 0.3s ease'
                 }}
               >
@@ -211,7 +222,7 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
           <div className="space-y-2" dir="auto">
             <h1 
               className="text-3xl font-bold"
-              style={{ color: style.primaryColor, transition: 'color 0.3s ease' }}
+              style={{ color: primaryColor, transition: 'color 0.3s ease' }}
             >
               {form.title || 'כותרת הטופס'}
             </h1>
@@ -227,7 +238,7 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
               <div 
                 key={question.id} 
                 className="space-y-3"
-                style={{ marginBottom: style.spacing }}
+                style={{ marginBottom: spacing }}
                 dir="auto"
               >
                 <Label className="text-base font-medium">
@@ -243,7 +254,7 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
                     dir="auto"
                     value={answers[question.id] || ''}
                     onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                    style={{ borderRadius: style.borderRadius }}
+                    style={{ borderRadius: borderRadius }}
                   />
                 )}
 
@@ -254,7 +265,7 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
                     dir="auto"
                     value={answers[question.id] || ''}
                     onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                    style={{ borderRadius: style.borderRadius }}
+                    style={{ borderRadius: borderRadius }}
                   />
                 )}
 
@@ -265,7 +276,7 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
                     dir="auto"
                     value={answers[question.id] || ''}
                     onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                    style={{ borderRadius: style.borderRadius }}
+                    style={{ borderRadius: borderRadius }}
                   />
                 )}
 
@@ -322,12 +333,12 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
               type="submit"
               className="w-full"
               style={{ 
-                backgroundColor: style.primaryColor,
-                borderRadius: style.borderRadius,
+                backgroundColor: primaryColor,
+                borderRadius: borderRadius,
                 transition: 'all 0.3s ease'
               }}
             >
-              שלח טופס
+              {submitButtonText}
             </Button>
           )}
           </Card>
