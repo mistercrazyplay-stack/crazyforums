@@ -19,6 +19,11 @@ export interface FormStyle {
   primaryColor: string;
   borderRadius: string;
   spacing: string;
+  backgroundType: 'solid' | 'gradient' | 'image';
+  gradientStart?: string;
+  gradientEnd?: string;
+  gradientDirection?: string;
+  backgroundImage?: string;
 }
 
 export interface Form {

@@ -15,6 +15,11 @@ const Index = () => {
       primaryColor: '#3b82f6',
       borderRadius: '8px',
       spacing: '1.5rem',
+      backgroundType: 'solid',
+      gradientStart: '#3b82f6',
+      gradientEnd: '#8b5cf6',
+      gradientDirection: 'to bottom',
+      backgroundImage: '',
     },
   });
 

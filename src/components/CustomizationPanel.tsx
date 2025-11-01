@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { Palette } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface CustomizationPanelProps {
   style: FormStyle;
@@ -18,17 +19,86 @@ const CustomizationPanel = ({ style, onStyleChange }: CustomizationPanelProps) =
         <h3 className="font-semibold">עיצוב הטופס</h3>
       </div>
 
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label>צבע רקע</Label>
-          <Input
-            type="color"
-            value={style.backgroundColor}
-            onChange={(e) => onStyleChange({ ...style, backgroundColor: e.target.value })}
-            className="h-10 cursor-pointer"
-          />
-        </div>
+      <Tabs 
+        value={style.backgroundType} 
+        onValueChange={(value) => onStyleChange({ ...style, backgroundType: value as 'solid' | 'gradient' | 'image' })}
+      >
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="solid">צבע אחיד</TabsTrigger>
+          <TabsTrigger value="gradient">מעבר צבעים</TabsTrigger>
+          <TabsTrigger value="image">תמונת רקע</TabsTrigger>
+        </TabsList>
 
+        <TabsContent value="solid" className="space-y-4">
+          <div className="space-y-2">
+            <Label>צבע רקע</Label>
+            <Input
+              type="color"
+              value={style.backgroundColor}
+              onChange={(e) => onStyleChange({ ...style, backgroundColor: e.target.value })}
+              className="h-10 cursor-pointer"
+            />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="gradient" className="space-y-4">
+          <div className="space-y-2">
+            <Label>צבע התחלה</Label>
+            <Input
+              type="color"
+              value={style.gradientStart || '#3b82f6'}
+              onChange={(e) => onStyleChange({ ...style, gradientStart: e.target.value })}
+              className="h-10 cursor-pointer"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>צבע סיום</Label>
+            <Input
+              type="color"
+              value={style.gradientEnd || '#8b5cf6'}
+              onChange={(e) => onStyleChange({ ...style, gradientEnd: e.target.value })}
+              className="h-10 cursor-pointer"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>כיוון המעבר</Label>
+            <Select 
+              value={style.gradientDirection || 'to bottom'} 
+              onValueChange={(value) => onStyleChange({ ...style, gradientDirection: value })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="to bottom">למטה</SelectItem>
+                <SelectItem value="to top">למעלה</SelectItem>
+                <SelectItem value="to right">ימינה</SelectItem>
+                <SelectItem value="to left">שמאלה</SelectItem>
+                <SelectItem value="to bottom right">אלכסון ימינה למטה</SelectItem>
+                <SelectItem value="to bottom left">אלכסון שמאלה למטה</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="image" className="space-y-4">
+          <div className="space-y-2">
+            <Label>כתובת תמונה (URL)</Label>
+            <Input
+              type="url"
+              value={style.backgroundImage || ''}
+              onChange={(e) => onStyleChange({ ...style, backgroundImage: e.target.value })}
+              placeholder="https://example.com/image.jpg"
+              dir="ltr"
+            />
+            <p className="text-xs text-muted-foreground">
+              הדבק קישור לתמונה מהאינטרנט
+            </p>
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      <div className="space-y-4">
         <div className="space-y-2">
           <Label>צבע טקסט</Label>
           <Input

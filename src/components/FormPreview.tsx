@@ -14,13 +14,37 @@ interface FormPreviewProps {
 const FormPreview = ({ form }: FormPreviewProps) => {
   const { style } = form;
 
+  const getBackgroundStyle = () => {
+    const baseStyle: React.CSSProperties = {
+      color: style.textColor,
+      transition: 'all 0.3s ease'
+    };
+
+    if (style.backgroundType === 'gradient' && style.gradientStart && style.gradientEnd) {
+      return {
+        ...baseStyle,
+        backgroundImage: `linear-gradient(${style.gradientDirection || 'to bottom'}, ${style.gradientStart}, ${style.gradientEnd})`
+      };
+    } else if (style.backgroundType === 'image' && style.backgroundImage) {
+      return {
+        ...baseStyle,
+        backgroundImage: `url(${style.backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      };
+    }
+    
+    return {
+      ...baseStyle,
+      backgroundColor: style.backgroundColor
+    };
+  };
+
   return (
     <div 
-      className="min-h-screen p-6 transition-colors"
-      style={{ 
-        backgroundColor: style.backgroundColor,
-        color: style.textColor 
-      }}
+      className="min-h-screen p-6"
+      style={getBackgroundStyle()}
     >
       <div className="max-w-2xl mx-auto">
         <Card 
