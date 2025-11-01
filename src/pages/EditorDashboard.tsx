@@ -35,14 +35,44 @@ export default function EditorDashboard() {
 
   const loadForms = async () => {
     try {
-      const { data, error } = await supabase
+      // Get forms where user is creator
+      const { data: ownedForms, error: ownedError } = await supabase
         .from("forms")
-        .select("*, form_editors!inner(*)")
-        .or(`created_by.eq.${user?.id},form_editors.user_id.eq.${user?.id}`)
+        .select("*")
+        .eq("created_by", user?.id)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      setForms(data || []);
+      if (ownedError) throw ownedError;
+
+      // Get forms where user is an editor
+      const { data: editorRelations, error: editorError } = await supabase
+        .from("form_editors")
+        .select("form_id")
+        .eq("user_id", user?.id);
+
+      if (editorError) throw editorError;
+
+      const editorFormIds = editorRelations?.map(r => r.form_id) || [];
+      
+      let sharedForms = [];
+      if (editorFormIds.length > 0) {
+        const { data: sharedFormsData, error: sharedError } = await supabase
+          .from("forms")
+          .select("*")
+          .in("id", editorFormIds)
+          .order("created_at", { ascending: false });
+
+        if (sharedError) throw sharedError;
+        sharedForms = sharedFormsData || [];
+      }
+
+      // Combine and deduplicate forms
+      const allForms = [...(ownedForms || []), ...sharedForms];
+      const uniqueForms = Array.from(
+        new Map(allForms.map(form => [form.id, form])).values()
+      );
+
+      setForms(uniqueForms);
     } catch (error: any) {
       toast({
         title: "שגיאה",

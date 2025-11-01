@@ -246,6 +246,14 @@ export type Database = {
     }
     Functions: {
       generate_unique_slug: { Args: { base_text: string }; Returns: string }
+      is_form_editor: {
+        Args: { _form_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_question_editor: {
+        Args: { _question_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
