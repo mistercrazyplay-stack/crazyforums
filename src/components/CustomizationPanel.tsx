@@ -35,7 +35,7 @@ const CustomizationPanel = ({ style, onStyleChange }: CustomizationPanelProps) =
             <Input
               type="color"
               value={style.backgroundColor}
-              onChange={(e) => onStyleChange({ ...style, backgroundColor: e.target.value })}
+              onChange={(e) => onStyleChange({ ...style, backgroundColor: e.target.value, backgroundType: 'solid' })}
               className="h-10 cursor-pointer"
             />
           </div>
@@ -47,7 +47,7 @@ const CustomizationPanel = ({ style, onStyleChange }: CustomizationPanelProps) =
             <Input
               type="color"
               value={style.gradientStart || '#3b82f6'}
-              onChange={(e) => onStyleChange({ ...style, gradientStart: e.target.value })}
+              onChange={(e) => onStyleChange({ ...style, gradientStart: e.target.value, backgroundType: 'gradient' })}
               className="h-10 cursor-pointer"
             />
           </div>
@@ -56,7 +56,7 @@ const CustomizationPanel = ({ style, onStyleChange }: CustomizationPanelProps) =
             <Input
               type="color"
               value={style.gradientEnd || '#8b5cf6'}
-              onChange={(e) => onStyleChange({ ...style, gradientEnd: e.target.value })}
+              onChange={(e) => onStyleChange({ ...style, gradientEnd: e.target.value, backgroundType: 'gradient' })}
               className="h-10 cursor-pointer"
             />
           </div>
@@ -87,7 +87,7 @@ const CustomizationPanel = ({ style, onStyleChange }: CustomizationPanelProps) =
             <Input
               type="url"
               value={style.backgroundImage || ''}
-              onChange={(e) => onStyleChange({ ...style, backgroundImage: e.target.value })}
+              onChange={(e) => onStyleChange({ ...style, backgroundImage: e.target.value, backgroundType: e.target.value ? 'image' : 'solid' })}
               placeholder="https://example.com/image.jpg"
               dir="ltr"
             />
