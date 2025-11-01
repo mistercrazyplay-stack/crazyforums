@@ -1,7 +1,15 @@
+import { useState, useEffect } from "react";
 import { Form } from "@/types/form";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Edit, Trash2, Eye } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, Settings } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,18 +31,93 @@ interface FormsListProps {
 }
 
 const FormsList = ({ forms, onCreateNew, onEdit, onDelete, onPreview }: FormsListProps) => {
+  const [backgroundColor, setBackgroundColor] = useState<string>('#ffffff');
+
+  // Load background color from localStorage
+  useEffect(() => {
+    const savedColor = localStorage.getItem('home-background-color');
+    if (savedColor) {
+      setBackgroundColor(savedColor);
+    }
+  }, []);
+
+  // Save background color to localStorage
+  const handleColorChange = (color: string) => {
+    setBackgroundColor(color);
+    localStorage.setItem('home-background-color', color);
+  };
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ backgroundColor }}>
       <div className="container mx-auto py-8 px-4 max-w-6xl">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold mb-2">הטפסים שלי</h1>
             <p className="text-muted-foreground">נהל את כל הטפסים עבור שרת הדיסקורד שלך</p>
           </div>
-          <Button onClick={onCreateNew} size="lg">
-            <Plus className="w-5 h-5 mr-2" />
-            טופס חדש
-          </Button>
+          <div className="flex gap-2">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="lg">
+                  <Settings className="w-5 h-5" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80">
+                <div className="space-y-4">
+                  <h3 className="font-semibold">הגדרות דף הבית</h3>
+                  <div className="space-y-2">
+                    <Label htmlFor="bg-color">צבע רקע</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="bg-color"
+                        type="color"
+                        value={backgroundColor}
+                        onChange={(e) => handleColorChange(e.target.value)}
+                        className="w-20 h-10 cursor-pointer"
+                      />
+                      <Input
+                        type="text"
+                        value={backgroundColor}
+                        onChange={(e) => handleColorChange(e.target.value)}
+                        placeholder="#ffffff"
+                        className="flex-1"
+                      />
+                    </div>
+                    <div className="flex gap-2 pt-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleColorChange('#ffffff')}
+                        className="flex-1"
+                      >
+                        לבן
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleColorChange('#000000')}
+                        className="flex-1"
+                      >
+                        שחור
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleColorChange('#1e293b')}
+                        className="flex-1"
+                      >
+                        כהה
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+            <Button onClick={onCreateNew} size="lg">
+              <Plus className="w-5 h-5 mr-2" />
+              טופס חדש
+            </Button>
+          </div>
         </div>
 
         {forms.length === 0 ? (
