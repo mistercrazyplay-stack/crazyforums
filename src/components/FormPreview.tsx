@@ -143,9 +143,9 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
                 </svg>
               </div>
               <div className="space-y-2">
-                <h2 className="text-2xl font-bold" style={{ color: style.primaryColor }}>
-                  {style.closedMessage || 'הטופס סגור'}
-                </h2>
+            <h2 className="text-2xl font-bold" style={{ color: style.primaryColor, transition: 'color 0.3s ease' }}>
+              {style.closedMessage || 'הטופס סגור'}
+            </h2>
                 <p className="text-muted-foreground">
                   אנא המתן לפתיחת הטופס בפעם הבאה
                 </p>
@@ -177,7 +177,7 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
                 </svg>
               </div>
               <div className="space-y-2">
-                <h2 className="text-2xl font-bold" style={{ color: style.primaryColor }}>
+                <h2 className="text-2xl font-bold" style={{ color: style.primaryColor, transition: 'color 0.3s ease' }}>
                   {style.successMessage || 'הטופס נשלח בהצלחה!'}
                 </h2>
                 <p className="text-muted-foreground">
@@ -191,7 +191,8 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
                 }}
                 style={{ 
                   backgroundColor: style.primaryColor,
-                  borderRadius: style.borderRadius 
+                  borderRadius: style.borderRadius,
+                  transition: 'all 0.3s ease'
                 }}
               >
                 מלא טופס נוסף
@@ -210,7 +211,7 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
           <div className="space-y-2" dir="auto">
             <h1 
               className="text-3xl font-bold"
-              style={{ color: style.primaryColor }}
+              style={{ color: style.primaryColor, transition: 'color 0.3s ease' }}
             >
               {form.title || 'כותרת הטופס'}
             </h1>
@@ -322,7 +323,8 @@ const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
               className="w-full"
               style={{ 
                 backgroundColor: style.primaryColor,
-                borderRadius: style.borderRadius 
+                borderRadius: style.borderRadius,
+                transition: 'all 0.3s ease'
               }}
             >
               שלח טופס
