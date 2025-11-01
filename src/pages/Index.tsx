@@ -40,6 +40,8 @@ const Index = () => {
       title: '',
       description: '',
       questions: [],
+      status: 'open',
+      responses: [],
       style: {
         backgroundColor: '#f8fafc',
         textColor: '#0f172a',
@@ -52,6 +54,7 @@ const Index = () => {
         gradientDirection: 'to bottom',
         backgroundImage: '',
         successMessage: 'הטופס נשלח בהצלחה!',
+        closedMessage: 'הטופס סגור. אנא המתן לפתיחה בפעם הבאה',
       },
     };
     setForms([...forms, newForm]);
@@ -113,7 +116,7 @@ const Index = () => {
             חזור לרשימה
           </button>
         </div>
-        <FormPreview form={currentForm} />
+          <FormPreview form={currentForm} onFormUpdate={updateForm} />
       </div>
     );
   }
@@ -137,7 +140,7 @@ const Index = () => {
               חזור לרשימה
             </button>
           </div>
-          <FormPreview form={currentForm} />
+          <FormPreview form={currentForm} onFormUpdate={updateForm} />
         </div>
       );
     }

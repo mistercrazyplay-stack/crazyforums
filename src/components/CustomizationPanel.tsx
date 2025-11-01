@@ -113,6 +113,19 @@ const CustomizationPanel = ({ style, onStyleChange }: CustomizationPanelProps) =
         </div>
 
         <div className="space-y-2">
+          <Label>הודעת טופס סגור</Label>
+          <Input
+            value={style.closedMessage || ''}
+            onChange={(e) => onStyleChange({ ...style, closedMessage: e.target.value })}
+            placeholder="הטופס סגור"
+            dir="auto"
+          />
+          <p className="text-xs text-muted-foreground">
+            ההודעה שתוצג כאשר הטופס סגור
+          </p>
+        </div>
+
+        <div className="space-y-2">
           <Label>צבע טקסט</Label>
           <Input
             type="color"

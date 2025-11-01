@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form } from "@/types/form";
+import { Form, FormResponse } from "@/types/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -11,9 +11,10 @@ import { toast } from "@/hooks/use-toast";
 
 interface FormPreviewProps {
   form: Form;
+  onFormUpdate?: (form: Form) => void;
 }
 
-const FormPreview = ({ form }: FormPreviewProps) => {
+const FormPreview = ({ form, onFormUpdate }: FormPreviewProps) => {
   const { style } = form;
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -49,7 +50,22 @@ const FormPreview = ({ form }: FormPreviewProps) => {
       return;
     }
 
-    // Form is valid
+    // Form is valid - save response
+    const newResponse: FormResponse = {
+      id: `response-${Date.now()}`,
+      submittedAt: new Date().toISOString(),
+      answers: answers
+    };
+    
+    // Save response to form
+    if (onFormUpdate) {
+      const updatedForm = {
+        ...form,
+        responses: [...(form.responses || []), newResponse]
+      };
+      onFormUpdate(updatedForm);
+    }
+    
     toast({
       title: "הטופס נשלח בהצלחה!",
       description: "תודה על מילוי הטופס.",
@@ -102,7 +118,41 @@ const FormPreview = ({ form }: FormPreviewProps) => {
   return (
     <div style={getBackgroundStyle()}>
       <div className="max-w-2xl mx-auto">
-        {isSubmitted ? (
+        {form.status === 'closed' ? (
+          <Card 
+            className="p-12 text-center shadow-xl"
+            style={{
+              borderRadius: style.borderRadius,
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            }}
+          >
+            <div className="space-y-6">
+              <div className="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mx-auto">
+                <svg
+                  className="w-10 h-10 text-red-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-2xl font-bold" style={{ color: style.primaryColor }}>
+                  {style.closedMessage || 'הטופס סגור'}
+                </h2>
+                <p className="text-muted-foreground">
+                  אנא המתן לפתיחת הטופס בפעם הבאה
+                </p>
+              </div>
+            </div>
+          </Card>
+        ) : isSubmitted ? (
           <Card 
             className="p-12 text-center shadow-xl"
             style={{

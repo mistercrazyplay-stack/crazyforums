@@ -25,6 +25,13 @@ export interface FormStyle {
   gradientDirection?: string;
   backgroundImage?: string;
   successMessage?: string;
+  closedMessage?: string;
+}
+
+export interface FormResponse {
+  id: string;
+  submittedAt: string;
+  answers: Record<string, any>;
 }
 
 export interface Form {
@@ -33,4 +40,6 @@ export interface Form {
   description: string;
   questions: Question[];
   style: FormStyle;
+  status: 'open' | 'closed';
+  responses: FormResponse[];
 }

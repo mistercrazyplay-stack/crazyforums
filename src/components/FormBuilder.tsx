@@ -4,11 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import QuestionEditor from "./QuestionEditor";
 import CustomizationPanel from "./CustomizationPanel";
-import { Plus, Save, Eye, EyeOff } from "lucide-react";
+import { Plus, Save, Eye, EyeOff, Lock, Unlock, MessageSquare } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface FormBuilderProps {
   form: Form;
@@ -58,6 +66,91 @@ const FormBuilder = ({ form, onFormChange, showPreview, onTogglePreview }: FormB
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">עורך טפסים</h2>
         <div className="flex gap-2">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <MessageSquare className="w-4 h-4 mr-2" />
+                תגובות ({form.responses?.length || 0})
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>תגובות ותשובות</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                {(!form.responses || form.responses.length === 0) ? (
+                  <p className="text-center text-muted-foreground py-8">
+                    אין תגובות עדיין
+                  </p>
+                ) : (
+                  form.responses.map((response) => (
+                    <Card key={response.id} className="p-4">
+                      <div className="flex justify-between items-start mb-3">
+                        <p className="text-sm text-muted-foreground">
+                          {new Date(response.submittedAt).toLocaleString('he-IL')}
+                        </p>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            const updatedResponses = form.responses.filter(r => r.id !== response.id);
+                            onFormChange({ ...form, responses: updatedResponses });
+                            toast({
+                              title: "התגובה נמחקה",
+                              description: "התגובה הוסרה בהצלחה",
+                            });
+                          }}
+                        >
+                          מחק
+                        </Button>
+                      </div>
+                      <div className="space-y-3">
+                        {form.questions.map((question) => {
+                          const answer = response.answers[question.id];
+                          if (!answer && answer !== 0) return null;
+                          
+                          return (
+                            <div key={question.id} className="border-b pb-2">
+                              <p className="font-medium text-sm mb-1">{question.title}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {question.type === 'checkbox' 
+                                  ? Object.entries(answer)
+                                      .filter(([_, checked]) => checked)
+                                      .map(([optId]) => {
+                                        const opt = question.options?.find(o => o.id === optId);
+                                        return opt?.label;
+                                      })
+                                      .join(', ')
+                                  : question.type === 'multiple-choice'
+                                    ? question.options?.find(o => o.id === answer)?.label
+                                    : answer}
+                              </p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </Card>
+                  ))
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
+          <Button 
+            variant={form.status === 'closed' ? 'destructive' : 'outline'}
+            onClick={() => onFormChange({ ...form, status: form.status === 'open' ? 'closed' : 'open' })}
+          >
+            {form.status === 'closed' ? (
+              <>
+                <Lock className="w-4 h-4 mr-2" />
+                טופס סגור
+              </>
+            ) : (
+              <>
+                <Unlock className="w-4 h-4 mr-2" />
+                טופס פתוח
+              </>
+            )}
+          </Button>
           <Button onClick={onTogglePreview} variant="outline">
             {showPreview ? <EyeOff className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
             {showPreview ? 'הסתר תצוגה מקדימה' : 'הצג תצוגה מקדימה'}
