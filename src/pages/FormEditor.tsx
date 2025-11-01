@@ -157,6 +157,32 @@ export default function FormEditor() {
     }
   };
 
+  const [statusSaving, setStatusSaving] = useState(false);
+  const toggleStatus = async () => {
+    if (!form) return;
+    setStatusSaving(true);
+    try {
+      const newStatus = form.status === "open" ? "closed" : "open";
+      const { error } = await supabase
+        .from("forms")
+        .update({ status: newStatus })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      setForm((prev: any) => ({ ...prev, status: newStatus }));
+      toast({ title: newStatus === "closed" ? "הטופס נסגר" : "הטופס נפתח" });
+    } catch (error: any) {
+      toast({
+        title: "שגיאה",
+        description: "לא ניתן לעדכן סטטוס טופס",
+        variant: "destructive",
+      });
+    } finally {
+      setStatusSaving(false);
+    }
+  };
+
   const addQuestion = (type: string) => {
     const newQuestion = {
       id: `temp-${Date.now()}`,
@@ -240,10 +266,11 @@ export default function FormEditor() {
             </Button>
             <Button
               variant="outline"
-              onClick={() => setForm({ ...form, status: form.status === "open" ? "closed" : "open" })}
+              onClick={toggleStatus}
+              disabled={statusSaving || saving}
             >
               {form.status === "open" ? <Lock className="w-4 h-4 ml-2" /> : <Unlock className="w-4 h-4 ml-2" />}
-              {form.status === "open" ? "סגור טופס" : "פתח טופס"}
+              {statusSaving ? "מעבד..." : (form.status === "open" ? "סגור טופס" : "פתח טופס")}
             </Button>
             <Dialog>
               <DialogTrigger asChild>
