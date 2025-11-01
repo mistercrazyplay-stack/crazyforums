@@ -14,27 +14,40 @@ interface FormPreviewProps {
 const FormPreview = ({ form }: FormPreviewProps) => {
   const { style } = form;
 
-  const getBackgroundStyle = () => {
+  const getBackgroundStyle = (): React.CSSProperties => {
     const baseStyle: React.CSSProperties = {
       color: style.textColor,
+      minHeight: '100vh',
+      padding: '1.5rem',
       transition: 'all 0.3s ease'
     };
 
-    if (style.backgroundType === 'gradient' && style.gradientStart && style.gradientEnd) {
+    // Gradient background
+    if (style.backgroundType === 'gradient') {
+      const startColor = style.gradientStart || '#3b82f6';
+      const endColor = style.gradientEnd || '#8b5cf6';
+      const direction = style.gradientDirection || 'to bottom';
+      
       return {
         ...baseStyle,
-        backgroundImage: `linear-gradient(${style.gradientDirection || 'to bottom'}, ${style.gradientStart}, ${style.gradientEnd})`
+        background: `linear-gradient(${direction}, ${startColor}, ${endColor})`,
+        backgroundAttachment: 'fixed'
       };
-    } else if (style.backgroundType === 'image' && style.backgroundImage) {
+    } 
+    
+    // Image background
+    if (style.backgroundType === 'image' && style.backgroundImage) {
       return {
         ...baseStyle,
         backgroundImage: `url(${style.backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
         backgroundAttachment: 'fixed'
       };
     }
     
+    // Solid color background (default)
     return {
       ...baseStyle,
       backgroundColor: style.backgroundColor
@@ -42,16 +55,13 @@ const FormPreview = ({ form }: FormPreviewProps) => {
   };
 
   return (
-    <div 
-      className="min-h-screen p-6"
-      style={getBackgroundStyle()}
-    >
+    <div style={getBackgroundStyle()}>
       <div className="max-w-2xl mx-auto">
         <Card 
-          className="p-8 space-y-6"
+          className="p-8 space-y-6 shadow-xl"
           style={{
             borderRadius: style.borderRadius,
-            backgroundColor: 'hsl(var(--card))',
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
           }}
         >
           <div className="space-y-2" dir="auto">
