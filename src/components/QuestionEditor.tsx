@@ -81,6 +81,7 @@ const QuestionEditor = ({ question, onUpdate, onDelete }: QuestionEditorProps) =
                 <SelectItem value="textarea">תשובה ארוכה</SelectItem>
                 <SelectItem value="multiple-choice">בחירה מרובה</SelectItem>
                 <SelectItem value="checkbox">תיבות סימון</SelectItem>
+                <SelectItem value="number">שדה מספר</SelectItem>
               </SelectContent>
             </Select>
           </div>

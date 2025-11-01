@@ -101,6 +101,15 @@ const FormPreview = ({ form }: FormPreviewProps) => {
                   />
                 )}
 
+                {question.type === 'number' && (
+                  <Input 
+                    type="number" 
+                    placeholder="הזן מספר..." 
+                    dir="auto"
+                    style={{ borderRadius: style.borderRadius }}
+                  />
+                )}
+
                 {question.type === 'textarea' && (
                   <Textarea 
                     placeholder="תשובתך..." 

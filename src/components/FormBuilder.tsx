@@ -146,6 +146,15 @@ const FormBuilder = ({ form, onFormChange, showPreview, onTogglePreview }: FormB
               <Plus className="w-4 h-4 mr-2" />
               תיבות סימון
             </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => addQuestion('number')}
+              className="justify-start"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              שדה מספר
+            </Button>
           </div>
         </div>
       </Card>
