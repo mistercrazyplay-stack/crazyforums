@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import QuestionEditor from "@/components/QuestionEditor";
 import CustomizationPanel from "@/components/CustomizationPanel";
+import AIAssistant from "@/components/AIAssistant";
 
 export default function FormEditor() {
   const { id } = useParams();
@@ -239,6 +240,17 @@ export default function FormEditor() {
     });
   };
 
+  const handleImageGenerated = (imageUrl: string) => {
+    setForm((prev: any) => ({
+      ...prev,
+      style: {
+        ...prev.style,
+        backgroundType: 'image',
+        backgroundImage: imageUrl,
+      }
+    }));
+  };
+
   if (authLoading || loading || !form) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -249,6 +261,7 @@ export default function FormEditor() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10 p-6">
+      <AIAssistant onImageGenerated={handleImageGenerated} />
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <Button variant="outline" onClick={() => navigate("/editor")}>
