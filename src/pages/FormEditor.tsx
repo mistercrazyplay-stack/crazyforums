@@ -306,11 +306,25 @@ export default function FormEditor() {
                           const question = questions.find((q) => q.id === qId);
                           if (!question) return null;
 
+                          // Convert option IDs to labels for multiple-choice and checkbox questions
+                          let displayValue = answer;
+                          if (question.type === 'multiple-choice' && question.question_options) {
+                            const option = question.question_options.find((opt: any) => opt.id === answer);
+                            displayValue = option?.label || answer;
+                          } else if (question.type === 'checkbox' && Array.isArray(answer) && question.question_options) {
+                            displayValue = answer.map((optId: string) => {
+                              const option = question.question_options.find((opt: any) => opt.id === optId);
+                              return option?.label || optId;
+                            }).join(", ");
+                          } else if (Array.isArray(answer)) {
+                            displayValue = answer.join(", ");
+                          }
+
                           return (
                             <div key={qId}>
                               <p className="font-medium">{question.title}</p>
                               <p className="text-muted-foreground">
-                                {Array.isArray(answer) ? answer.join(", ") : answer}
+                                {displayValue}
                               </p>
                             </div>
                           );
