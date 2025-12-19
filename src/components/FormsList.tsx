@@ -1,8 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
 import { Form } from "@/types/form";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Edit, Trash2, Eye, Sparkles, Zap } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, Sparkles } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,6 +13,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import ParticleNetwork from "./ParticleNetwork";
+import StickyNav from "./StickyNav";
+import { playHoverSound, playClickSound, playDeleteSound } from "@/lib/sounds";
 
 interface FormsListProps {
   forms: Form[];
@@ -23,61 +25,18 @@ interface FormsListProps {
   onPreview: (formId: string) => void;
 }
 
-// Particle component for animated background
-const Particle = ({ delay, duration, left }: { delay: number; duration: number; left: number }) => (
-  <div
-    className="absolute w-1 h-1 bg-primary/60 rounded-full"
-    style={{
-      left: `${left}%`,
-      animation: `particle-float ${duration}s linear infinite`,
-      animationDelay: `${delay}s`,
-    }}
-  />
-);
-
-// Generate particles
-const generateParticles = (count: number) => {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i,
-    delay: Math.random() * 15,
-    duration: 10 + Math.random() * 10,
-    left: Math.random() * 100,
-  }));
-};
-
 const FormsList = ({ forms, onCreateNew, onEdit, onDelete, onPreview }: FormsListProps) => {
-  const [particles] = useState(() => generateParticles(30));
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    setMousePosition({ x: e.clientX, y: e.clientY });
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [handleMouseMove]);
-
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Animated particle background */}
-      <div className="particles-bg">
-        {particles.map((particle) => (
-          <Particle key={particle.id} {...particle} />
-        ))}
-      </div>
+      {/* Neural Network Particle Background */}
+      <ParticleNetwork />
 
-      {/* Radial gradient following mouse */}
-      <div
-        className="fixed inset-0 pointer-events-none transition-opacity duration-300"
-        style={{
-          background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, hsl(var(--primary) / 0.06), transparent 40%)`,
-        }}
-      />
+      {/* Sticky Navigation */}
+      <StickyNav onCreateNew={onCreateNew} />
 
       {/* Grid pattern overlay */}
       <div 
-        className="fixed inset-0 pointer-events-none opacity-[0.02]"
+        className="fixed inset-0 pointer-events-none opacity-[0.015] z-[1]"
         style={{
           backgroundImage: `
             linear-gradient(hsl(var(--primary) / 0.5) 1px, transparent 1px),
@@ -88,11 +47,14 @@ const FormsList = ({ forms, onCreateNew, onEdit, onDelete, onPreview }: FormsLis
       />
 
       {/* Main content */}
-      <div className="relative z-10 container mx-auto py-12 px-4 max-w-6xl">
+      <div className="relative z-10 container mx-auto pt-32 pb-12 px-4 max-w-6xl">
         {/* Header */}
         <div className="text-center mb-16 stagger-children">
-          <div className="inline-flex items-center gap-2 px-4 py-2 glass-card mb-6 text-sm text-muted-foreground">
-            <Sparkles className="w-4 h-4 text-primary" />
+          <div 
+            className="inline-flex items-center gap-2 px-4 py-2 glass-card mb-6 text-sm text-muted-foreground cursor-default"
+            onMouseEnter={playHoverSound}
+          >
+            <Sparkles className="w-4 h-4 text-primary animate-pulse" />
             <span className="font-inter">בונה טפסים מתקדם</span>
           </div>
           
@@ -105,11 +67,15 @@ const FormsList = ({ forms, onCreateNew, onEdit, onDelete, onPreview }: FormsLis
           </p>
 
           <Button 
-            onClick={onCreateNew} 
+            onClick={() => {
+              playClickSound();
+              onCreateNew();
+            }}
+            onMouseEnter={playHoverSound}
             className="btn-neon group"
             size="lg"
           >
-            <Zap className="w-5 h-5 ml-2 group-hover:animate-pulse" />
+            <Plus className="w-5 h-5 ml-2 group-hover:rotate-90 transition-transform duration-300" />
             <span>צור טופס חדש</span>
           </Button>
         </div>
@@ -118,14 +84,28 @@ const FormsList = ({ forms, onCreateNew, onEdit, onDelete, onPreview }: FormsLis
         {forms.length === 0 ? (
           <Card className="glass-card p-16 text-center glow-border fade-in-up" style={{ animationDelay: '0.3s' }}>
             <div className="max-w-md mx-auto space-y-6">
-              <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto pulse-glow">
+              <div 
+                className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto pulse-glow cursor-pointer hover:scale-110 transition-transform duration-300"
+                onMouseEnter={playHoverSound}
+                onClick={() => {
+                  playClickSound();
+                  onCreateNew();
+                }}
+              >
                 <Plus className="w-10 h-10 text-primary" />
               </div>
               <h2 className="text-2xl font-orbitron font-semibold">אין טפסים עדיין</h2>
               <p className="text-muted-foreground font-inter font-light">
                 צור את הטופס הראשון שלך והתחל לאסוף מידע בסטייל
               </p>
-              <Button onClick={onCreateNew} className="btn-neon mt-4">
+              <Button 
+                onClick={() => {
+                  playClickSound();
+                  onCreateNew();
+                }}
+                onMouseEnter={playHoverSound}
+                className="btn-neon mt-4"
+              >
                 <Plus className="w-5 h-5 ml-2" />
                 צור טופס ראשון
               </Button>
@@ -138,6 +118,7 @@ const FormsList = ({ forms, onCreateNew, onEdit, onDelete, onPreview }: FormsLis
                 key={form.id} 
                 className="glass-card p-6 space-y-4 group hover:scale-[1.02] transition-all duration-300 glow-border"
                 style={{ animationDelay: `${0.1 * (index + 1)}s` }}
+                onMouseEnter={playHoverSound}
               >
                 <div className="space-y-3">
                   <div className="flex items-start justify-between">
@@ -164,18 +145,26 @@ const FormsList = ({ forms, onCreateNew, onEdit, onDelete, onPreview }: FormsLis
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => onPreview(form.id)}
-                    className="flex-1 bg-transparent border-border/50 hover:bg-primary/10 hover:border-primary/50 hover:text-primary transition-all duration-300"
+                    onClick={() => {
+                      playClickSound();
+                      onPreview(form.id);
+                    }}
+                    onMouseEnter={playHoverSound}
+                    className="flex-1 bg-transparent border-border/50 hover:bg-primary/10 hover:border-primary/50 hover:text-primary transition-all duration-300 group/btn"
                   >
-                    <Eye className="w-4 h-4 ml-2" />
+                    <Eye className="w-4 h-4 ml-2 group-hover/btn:scale-110 transition-transform" />
                     תצוגה
                   </Button>
                   <Button
                     size="sm"
-                    onClick={() => onEdit(form.id)}
-                    className="flex-1 btn-neon text-sm py-2"
+                    onClick={() => {
+                      playClickSound();
+                      onEdit(form.id);
+                    }}
+                    onMouseEnter={playHoverSound}
+                    className="flex-1 btn-neon text-sm py-2 group/btn"
                   >
-                    <Edit className="w-4 h-4 ml-2" />
+                    <Edit className="w-4 h-4 ml-2 group-hover/btn:rotate-12 transition-transform" />
                     עריכה
                   </Button>
                   <AlertDialog>
@@ -183,9 +172,11 @@ const FormsList = ({ forms, onCreateNew, onEdit, onDelete, onPreview }: FormsLis
                       <Button 
                         variant="outline" 
                         size="sm"
-                        className="bg-transparent border-destructive/30 hover:bg-destructive/10 hover:border-destructive/50 text-destructive transition-all duration-300"
+                        onMouseEnter={playHoverSound}
+                        onClick={playClickSound}
+                        className="bg-transparent border-destructive/30 hover:bg-destructive/10 hover:border-destructive/50 text-destructive transition-all duration-300 group/btn"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent className="glass-card border-border/50">
@@ -197,9 +188,19 @@ const FormsList = ({ forms, onCreateNew, onEdit, onDelete, onPreview }: FormsLis
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel className="font-inter">ביטול</AlertDialogCancel>
+                        <AlertDialogCancel 
+                          className="font-inter"
+                          onMouseEnter={playHoverSound}
+                          onClick={playClickSound}
+                        >
+                          ביטול
+                        </AlertDialogCancel>
                         <AlertDialogAction 
-                          onClick={() => onDelete(form.id)}
+                          onClick={() => {
+                            playDeleteSound();
+                            onDelete(form.id);
+                          }}
+                          onMouseEnter={playHoverSound}
                           className="bg-destructive hover:bg-destructive/90"
                         >
                           מחק
@@ -216,7 +217,7 @@ const FormsList = ({ forms, onCreateNew, onEdit, onDelete, onPreview }: FormsLis
         {/* Footer */}
         <div className="mt-20 text-center fade-in-up" style={{ animationDelay: '0.5s' }}>
           <p className="text-sm text-muted-foreground font-inter font-light">
-            Built with <span className="text-primary">♥</span> by CrazyForms
+            Built with <span className="text-primary animate-pulse">♥</span> by CrazyForms
           </p>
         </div>
       </div>
