@@ -90,8 +90,10 @@ export type Database = {
           id: string
           primary_color: string | null
           spacing: string | null
+          submit_button_text: string | null
           success_message: string | null
           text_color: string | null
+          validation_message: string | null
         }
         Insert: {
           background_color?: string | null
@@ -107,8 +109,10 @@ export type Database = {
           id?: string
           primary_color?: string | null
           spacing?: string | null
+          submit_button_text?: string | null
           success_message?: string | null
           text_color?: string | null
+          validation_message?: string | null
         }
         Update: {
           background_color?: string | null
@@ -124,8 +128,10 @@ export type Database = {
           id?: string
           primary_color?: string | null
           spacing?: string | null
+          submit_button_text?: string | null
           success_message?: string | null
           text_color?: string | null
+          validation_message?: string | null
         }
         Relationships: [
           {
